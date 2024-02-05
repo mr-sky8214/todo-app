@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { deleteTodoApi, retrieveAllTodosForUsernameApi } from "./api/TodoApiService";
 import { useAuth } from "./security/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 export default function ListTodosComponent() {
     const today = new Date();
@@ -8,7 +9,9 @@ export default function ListTodosComponent() {
 
     const authContext = useAuth();
 
-    const username = authContext.username
+    const username = authContext.username;
+
+    const navigate = useNavigate();
 
     const [todos, setTodos] = useState([])
 
@@ -39,6 +42,15 @@ export default function ListTodosComponent() {
         .catch(error => console.log(error))
     }
 
+    function updateTodo(id) {
+        console.log("update todo called " + id);
+        navigate(`/todos/${id}`)
+    }
+
+    function addNewTodo(id) {
+        navigate(`/todos/-1`)
+    }
+
     return (
         <div className="contain">
             <h1>Things you want to Do!</h1>
@@ -51,6 +63,7 @@ export default function ListTodosComponent() {
                             <th>IS DONE?</th>
                             <th>TARGET DATE</th>
                             <th>DELETE</th>
+                            <th>UPDATE</th>
                         </tr>
                     </thead>
 
@@ -63,6 +76,7 @@ export default function ListTodosComponent() {
                                         <td>{todo.done.toString()}</td>
                                         <td>{todo.targetDate}</td>
                                         <td><button className="btn btn-warning" onClick={() => deleteTodo(todo.id)}>Delete</button></td>
+                                        <td><button className="btn btn-success" onClick={() => updateTodo(todo.id)}>Update</button></td>
                                     </tr>
                                 )
                             )
@@ -70,6 +84,7 @@ export default function ListTodosComponent() {
                     </tbody>
                 </table>
             </div>
+            <div className="btn btn-success m-5" onClick={addNewTodo}>Add New Todo</div>
         </div>
     )
 }
